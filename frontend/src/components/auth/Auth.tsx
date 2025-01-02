@@ -3,15 +3,15 @@ import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from "react-router";
 
 function Auth() {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (auth.isAuthenticated) {
-      localStorage.setItem("id_token", auth.user?.id_token || "");
-      localStorage.setItem("access_token", auth.user?.access_token || "");
-      localStorage.setItem("refresh_token", auth.user?.refresh_token || "");
+      navigate("/dashboard");
     }
   }, [auth.isAuthenticated]);
 
