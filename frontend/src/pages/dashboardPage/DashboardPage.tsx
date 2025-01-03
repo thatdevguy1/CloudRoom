@@ -1,59 +1,57 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSideBar from "@/components/app-sidebar/AppSideBar";
 import { DataTable } from "@/components/data-table/DataTable";
-import { columns } from "@/components/table-columns/columns";
+import { buildColumns } from "@/components/data-table/columns";
 import UploadFile from "@/components/file-upload/FileUpload";
 import { useState, useEffect } from "react";
-import { JsonFile } from "@/types";
-import { convertFilesToBase64String, uploadFiles } from "@/utils/file";
+import { JsonFile, FileMetaData } from "@/types";
+import {
+  convertFilesToBase64String,
+  deleteFile,
+  getFilesMetaData,
+  uploadFiles,
+} from "@/utils/file";
 
 const Dashboard = () => {
-  const fileData = [
-    {
-      id: "1",
-      email: "d@d.ca",
-      name: "File 1",
-      size: "1 MB",
-      date: "2024-01-01",
-    },
-    {
-      id: "2",
-      email: "d@d.ca",
-      name: "File 2",
-      size: "2 MB",
-      date: "2024-01-02",
-    },
-    {
-      id: "3",
-      email: "d@d.ca",
-      name: "File 3",
-      size: "3 MB",
-      date: "2024-01-03",
-    },
-    {
-      id: "15",
-      email: "d@d.ca",
-      name: "File 12",
-      size: "1 MB",
-      date: "2024-01-01",
-    },
-  ];
-
   const [files, setFiles] = useState<FileList | null>(null);
   const [jsonFiles, setJsonFiles] = useState<JsonFile[] | null>(null);
+  const [fileData, setFileData] = useState<FileMetaData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (files) {
-      convertFilesToBase64String(files).then((jsonFiles) => {
+      (async () => {
+        const jsonFiles = await convertFilesToBase64String(files);
         setJsonFiles(jsonFiles);
-      });
+      })();
     }
   }, [files]);
 
-  const handleFileSubmit = async () => {
-    // handle files submit
-    const data = await uploadFiles(jsonFiles!);
-    console.log(data);
+  useEffect(() => {
+    (async () => {
+      const files = await getFilesMetaData();
+      if (files) setFileData(files);
+      console.log("jsonFiles", files);
+    })();
+  }, []);
+
+  const handleFileSubmit = async (): Promise<void> => {
+    setLoading(true);
+    const fileMetaData: FileMetaData[] = await uploadFiles(jsonFiles!);
+    setLoading(false);
+    if (fileMetaData)
+      setFileData((prevFileData) => [...prevFileData, ...fileMetaData]);
+  };
+
+  const handleDeleteFile = async (fileId: string): Promise<void> => {
+    setLoading(true);
+    const response = await deleteFile(fileId);
+    setLoading(false);
+    if (response) {
+      setFileData((prevFileData) =>
+        prevFileData.filter((file) => file.FileId !== fileId)
+      );
+    }
   };
 
   return (
@@ -61,9 +59,13 @@ const Dashboard = () => {
       <AppSideBar />
       <main className="w-[100%]">
         <SidebarTrigger />
-        <UploadFile setFiles={setFiles} handleFileSubmit={handleFileSubmit} />
+        <UploadFile
+          setFiles={setFiles}
+          handleFileSubmit={handleFileSubmit}
+          loading={loading}
+        />
         <div className="p-6">
-          <DataTable columns={columns} data={fileData} />
+          <DataTable columns={buildColumns(handleDeleteFile)} data={fileData} />
         </div>
       </main>
     </SidebarProvider>

@@ -1,27 +1,19 @@
 // App.jsq
-import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router";
 
-function Auth() {
+interface AuthProps {
+  setLoggedIn: (isLoggedIn: boolean) => void;
+  loggedIn: boolean;
+}
+
+function Auth({ setLoggedIn, loggedIn }: AuthProps) {
   const auth = useAuth();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (auth.isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [auth.isAuthenticated]);
-
-  const signOutRedirect = () => {
-    const clientId = "2qc9uch823amu97rhd8r1tcvpa";
-    const logoutUri = "http://localhost:5173/";
-    const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      logoutUri
-    )}`;
+  const handleSignout = () => {
+    auth.removeUser();
+    setLoggedIn(false);
   };
 
   const signUpRedirect = () => {
@@ -41,10 +33,10 @@ function Auth() {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
-  if (auth.isAuthenticated) {
+  if (loggedIn) {
     return (
       <div>
-        <Button onClick={() => auth.removeUser()}>Sign out</Button>
+        <Button onClick={handleSignout}>Sign out</Button>
       </div>
     );
   }

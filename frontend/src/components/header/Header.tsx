@@ -75,7 +75,12 @@ const subMenuItemsTwo = [
   },
 ];
 
-const Header = () => {
+interface HeaderProps {
+  setLoggedIn: (loggedIn: boolean) => void;
+  loggedIn: boolean;
+}
+
+const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
   return (
     <section className="p-4 border border-slate-200">
       <div className="container">
@@ -194,7 +199,7 @@ const Header = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Auth />
+            <Auth loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
           </div>
         </nav>
         <div className="block lg:hidden">

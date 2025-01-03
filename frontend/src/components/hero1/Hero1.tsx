@@ -1,11 +1,14 @@
 import { ArrowDownRight } from "lucide-react";
-
+import { Canvas } from "@react-three/fiber";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
+import LaptopModel from "../laptop-model/LaptopModel";
+import { Environment, OrbitControls, ContactShadows } from "@react-three/drei";
 
 const Hero1 = () => {
   return (
-    <section className="py-32">
+    <section className="py-32 px-10">
       <div className="container">
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -17,9 +20,10 @@ const Hero1 = () => {
               Welcome to CloudRoom
             </h1>
             <p className="mb-8 max-w-xl text-muted-foreground lg:text-xl">
-              We have a lot of data now a days that we want to keep but don't
-              need to access frequently. CloudRoom is the solution for you.
-              Store your infrequent accessed files for less.
+              Not all data needs to be at your fingertips, but it all deserves a
+              secure home. With CloudRoom, you can store your seldom-accessed
+              files affordably and reliably. Perfect for archiving the past
+              while focusing on the future.
             </p>
             <div className="flex w-full flex-col justify-center gap-2 sm:flex-row lg:justify-start">
               <Button className="w-full sm:w-auto">Sign Up Now</Button>
@@ -29,11 +33,27 @@ const Hero1 = () => {
               </Button>
             </div>
           </div>
-          <img
-            src="https://shadcnblocks.com/images/block/placeholder-1.svg"
-            alt="placeholder hero"
-            className="max-h-96 w-full rounded-md object-cover"
-          />
+          <Canvas camera={{ position: [-5, 0, -15], fov: 65 }}>
+            <pointLight position={[10, 10, 10]} intensity={1.5} />
+            <Suspense fallback={null}>
+              <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
+                <LaptopModel />
+              </group>
+              <Environment preset="city" />
+            </Suspense>
+            <ContactShadows
+              position={[0, -4.5, 0]}
+              scale={20}
+              blur={2}
+              far={4.5}
+            />
+            <OrbitControls
+              enablePan={false}
+              enableZoom={false}
+              minPolarAngle={Math.PI / 2.2}
+              maxPolarAngle={Math.PI / 2.2}
+            />
+          </Canvas>
         </div>
       </div>
     </section>

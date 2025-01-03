@@ -1,4 +1,3 @@
-import React from "react";
 import Hero1 from "../../components/hero1/Hero1";
 
 function LandingPage() {

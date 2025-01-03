@@ -8,14 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, DragEventHandler } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 interface FileUploadProps {
   setFiles: (files: FileList | null) => void;
   handleFileSubmit: () => void;
+  loading: boolean;
 }
 export default function FileUpload({
   setFiles,
   handleFileSubmit,
+  loading,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -81,9 +84,13 @@ export default function FileUpload({
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleFileSubmit} size="lg">
-          Upload
-        </Button>
+        {loading ? (
+          <Skeleton className="w-24 h-8" />
+        ) : (
+          <Button onClick={handleFileSubmit} size="lg">
+            Upload
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
