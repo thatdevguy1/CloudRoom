@@ -11,13 +11,16 @@ import {
   getFilesMetaData,
   uploadFiles,
 } from "@/utils/file";
+import { useAuth } from "react-oidc-context";
+import { useNavigate } from "react-router";
 
 const Dashboard = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [jsonFiles, setJsonFiles] = useState<JsonFile[] | null>(null);
   const [fileData, setFileData] = useState<FileMetaData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const auth = useAuth();
+  const navigate = useNavigate();
   useEffect(() => {
     if (files) {
       (async () => {
@@ -28,6 +31,8 @@ const Dashboard = () => {
   }, [files]);
 
   useEffect(() => {
+    if (!auth.user) navigate("/");
+
     (async () => {
       const files = await getFilesMetaData();
       if (files) setFileData(files);

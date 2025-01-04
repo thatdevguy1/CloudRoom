@@ -4,11 +4,9 @@ import { useFrame } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
 import FileToCloud from "../file-to-cloud/FileToCloud";
 
-function LaptopModel(props) {
-  const group = useRef();
-  const { nodes, materials } = useGLTF("Laptop.glb");
-  console.log("nodes:::::::", nodes);
-  const nodeKeyArr = Object.keys(nodes);
+function LaptopModel(props: any) {
+  const group: any = useRef();
+  const { nodes, materials }: any = useGLTF("Laptop.glb");
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();

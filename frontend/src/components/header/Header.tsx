@@ -27,6 +27,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Link } from "react-router";
 
 const subMenuItemsOne = [
   {
@@ -75,12 +76,7 @@ const subMenuItemsTwo = [
   },
 ];
 
-interface HeaderProps {
-  setLoggedIn: (loggedIn: boolean) => void;
-  loggedIn: boolean;
-}
-
-const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
+const Header = () => {
   return (
     <section className="p-4 border border-slate-200">
       <div className="container">
@@ -95,7 +91,7 @@ const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
               <span className="text-xl font-bold">CloudRoom</span>
             </div>
             <div className="flex items-center">
-              <a
+              <Link
                 className={cn(
                   "text-muted-foreground",
                   navigationMenuTriggerStyle,
@@ -103,10 +99,10 @@ const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
                     variant: "ghost",
                   })
                 )}
-                href="#"
+                to="/"
               >
                 Home
-              </a>
+              </Link>
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem className="text-muted-foreground">
@@ -172,7 +168,7 @@ const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
                 </NavigationMenuList>
               </NavigationMenu>
 
-              <a
+              <Link
                 className={cn(
                   "text-muted-foreground",
                   navigationMenuTriggerStyle,
@@ -180,10 +176,10 @@ const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
                     variant: "ghost",
                   })
                 )}
-                href="#"
+                to="/pricing"
               >
                 Pricing
-              </a>
+              </Link>
               <a
                 className={cn(
                   "text-muted-foreground",
@@ -199,7 +195,7 @@ const Header = ({ setLoggedIn, loggedIn }: HeaderProps) => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Auth loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+            <Auth />
           </div>
         </nav>
         <div className="block lg:hidden">

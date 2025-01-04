@@ -1,14 +1,6 @@
-import { useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
 
-interface SilentCallbackProps {
-  setLoggedIn: (isLoggedIn: boolean) => void;
-}
-
-function SilentCallback({ setLoggedIn }: SilentCallbackProps) {
-  useEffect(() => {
-    setLoggedIn(true);
-  }, []);
+function SilentCallback() {
   return (
     <>
       <div className="flex flex-row justify-around">

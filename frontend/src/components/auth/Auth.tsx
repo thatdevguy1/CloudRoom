@@ -1,19 +1,16 @@
 // App.jsq
 import { useAuth } from "react-oidc-context";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface AuthProps {
-  setLoggedIn: (isLoggedIn: boolean) => void;
-  loggedIn: boolean;
-}
-
-function Auth({ setLoggedIn, loggedIn }: AuthProps) {
+function Auth() {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleSignout = () => {
     auth.removeUser();
-    setLoggedIn(false);
+    navigate("/");
   };
 
   const signUpRedirect = () => {
@@ -33,7 +30,8 @@ function Auth({ setLoggedIn, loggedIn }: AuthProps) {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
-  if (loggedIn) {
+  if (auth.isAuthenticated) {
+    console.log(auth);
     return (
       <div>
         <Button onClick={handleSignout}>Sign out</Button>

@@ -2,32 +2,30 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Header from "@/components/header/Header";
 import LandingPage from "./pages/landingPage/LandingPage";
+import PricingPage from "./pages/pricingPage/PricingPage";
 import { Routes, Route, useNavigate } from "react-router";
 import Dashboard from "./pages/dashboardPage/DashboardPage";
 import SilentCallback from "./components/silent-callback/SilentCallback";
+import { useAuth } from "react-oidc-context";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const navigate = useNavigate();
+  const auth = useAuth();
 
   useEffect(() => {
-    if (loggedIn) {
+    if (auth.isAuthenticated) {
       navigate("/dashboard");
-    } else {
-      navigate("/");
     }
-  }, [loggedIn]);
+  }, [auth.isAuthenticated]);
 
   return (
     <>
-      <Header setLoggedIn={setLoggedIn} loggedIn={loggedIn} />
+      <Header />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/callback"
-          element={<SilentCallback setLoggedIn={setLoggedIn} />}
-        />
+        <Route path="/callback" element={<SilentCallback />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/pricing" element={<PricingPage />} />
       </Routes>
     </>
   );
