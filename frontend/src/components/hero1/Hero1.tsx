@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 import LaptopModel from "../laptop-model/LaptopModel";
 import { Environment, OrbitControls, ContactShadows } from "@react-three/drei";
+import { Link } from "react-router";
+import { signUpRedirect } from "@/utils/auth";
 
 const Hero1 = () => {
   return (
@@ -21,16 +23,20 @@ const Hero1 = () => {
             </h1>
             <p className="mb-8 max-w-xl text-muted-foreground lg:text-xl">
               Not all data needs to be at your fingertips, but it all deserves a
-              secure home. With CloudRoom, you can store your seldom-accessed
-              files affordably and reliably. Perfect for archiving the past
-              while focusing on the future.
+              secure home. With CloudRoom, you can store your files affordably
+              and reliably. Perfect for archiving the past while focusing on the
+              future.
             </p>
             <div className="flex w-full flex-col justify-center gap-2 sm:flex-row lg:justify-start">
-              <Button className="w-full sm:w-auto">Sign Up Now</Button>
-              <Button variant="outline" className="w-full sm:w-auto">
-                Checkout Our Plans
-                <ArrowDownRight className="ml-2 size-4" />
+              <Button onClick={signUpRedirect} className="w-full sm:w-auto">
+                Sign Up Now
               </Button>
+              <Link to="/pricing">
+                <Button variant="outline" className="w-full sm:w-auto">
+                  Checkout Our Plans
+                  <ArrowDownRight className="ml-2 size-4" />
+                </Button>
+              </Link>
             </div>
           </div>
           <Canvas camera={{ position: [-5, 0, -15], fov: 65 }}>

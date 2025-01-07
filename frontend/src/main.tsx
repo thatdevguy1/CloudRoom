@@ -22,6 +22,7 @@ const cognitoAuthConfig = {
   response_type: "code",
   scope: "openid email",
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
+  post_logout_redirect_uri: import.meta.env.VITE_LOGOUT_REDIRECT_URI,
 };
 
 createRoot(document.getElementById("root")!).render(

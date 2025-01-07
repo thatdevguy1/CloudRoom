@@ -1,10 +1,6 @@
-import { JsonFile, FileMetaData } from "../types";
+import { JsonFile, FileMetaData, UrlResponse } from "../types";
+import { getSessionInfo } from "./auth";
 
-const getSessionInfo = () => {
-  return sessionStorage.getItem(
-    "oidc.user:https://cognito-idp.us-east-1.amazonaws.com/us-east-1_883WzBpGQ:2qc9uch823amu97rhd8r1tcvpa"
-  );
-};
 export const convertFilesToBase64String = async (
   files: FileList
 ): Promise<JsonFile[]> => {
@@ -18,6 +14,7 @@ export const convertFilesToBase64String = async (
         resolve({
           fileName: files[i].name,
           content: reader.result,
+          size: files[i].size,
         });
 
       // Handle errors
@@ -33,21 +30,30 @@ export const convertFilesToBase64String = async (
   return Promise.all(strigifiedFiles);
 };
 
-export const uploadFiles = async (
-  files: JsonFile[]
-): Promise<FileMetaData[]> => {
+interface FileInfo {
+  FileName: string;
+  size: number;
+}
+
+export const uploadFiles = async (files: JsonFile[]): Promise<Response[]> => {
   try {
     const sessionInfo = getSessionInfo();
     if (sessionInfo === null) throw new Error("Session info not found");
     const sessionInfoObj = JSON.parse(sessionInfo);
+    const fileInfo: FileInfo[] = [];
 
     const cleanedFiles: JsonFile[] = files.map((file) => {
       let cleanContent;
+      const sanatisedFileName = file.fileName.replace(/_/g, "-");
       if (typeof file.content === "string")
         cleanContent = file.content?.split(",")[1];
+
+      // Backend lambda function expects pascal case property names
+      fileInfo.push({ FileName: sanatisedFileName, size: file.size });
       return {
-        fileName: file.fileName,
+        fileName: sanatisedFileName,
         content: cleanContent || file.content,
+        size: file.size,
       };
     });
 
@@ -57,12 +63,25 @@ export const uploadFiles = async (
         "Content-Type": "application/json",
         "x-auth-token": sessionInfoObj.id_token,
       },
-      body: JSON.stringify(cleanedFiles),
+      body: JSON.stringify(fileInfo),
     });
 
-    const data = await response.json();
-    console.log(data);
-    return data;
+    const urls = await response.json();
+    if (urls.error) throw new Error(urls.error);
+    console.log("urls::: ", urls);
+    const uploadPromises = cleanedFiles.map((file: JsonFile) => {
+      const { url } = urls.find(
+        (url: UrlResponse) => url.fileName === file.fileName
+      );
+      return fetch(url, {
+        method: "PUT",
+        body: JSON.stringify(file),
+      });
+    });
+
+    const res = await Promise.all(uploadPromises);
+
+    return res;
   } catch (error) {
     console.log("Error uploading files", error);
   }

@@ -8,29 +8,59 @@ import {
 const Faq = () => {
   const faqs = [
     {
-      question: "What is a FAQ?",
+      question: "What is CloudRoom?",
       answer:
-        "A FAQ is a list of frequently asked questions and answers on a particular topic.",
+        "CloudRoom is a secure and cost-effective cloud storage solution designed to store and manage your infrequently accessed files with ease.",
     },
     {
-      question: "What is the purpose of a FAQ?",
+      question: "How secure is my data on CloudRoom?",
       answer:
-        "The purpose of a FAQ is to provide answers to common questions and help users find the information they need quickly and easily.",
+        "Your data is encrypted both at rest and in transit, and we utilize AWS's robust infrastructure to ensure the highest levels of security and reliability.",
     },
     {
-      question: "How do I create a FAQ?",
+      question: "What file types can I store on CloudRoom?",
       answer:
-        "To create a FAQ, you need to compile a list of common questions and answers on a particular topic and organize them in a clear and easy-to-navigate format.",
+        "You can store a wide variety of file types, including documents, images, videos, and more. If you encounter any restrictions, feel free to contact our support team.",
     },
     {
-      question: "What are the benefits of a FAQ?",
+      question: "Is there a limit to how much data I can store?",
       answer:
-        "The benefits of a FAQ include providing quick and easy access to information, reducing the number of support requests, and improving the overall user experience.",
+        "CloudRoom offers flexible subscription plans to fit your needs. Whether you need 100GB or 500GB of storage, we’ve got you covered.",
+    },
+    {
+      question: "Can I access my files from any device?",
+      answer:
+        "Yes! CloudRoom is accessible from any device with an internet connection, ensuring you can retrieve your files whenever and wherever you need them.",
+    },
+    {
+      question: "What happens if I exceed my storage limit?",
+      answer:
+        "If you exceed your storage limit, you can upgrade your subscription plan at any time to add more space to your account.",
+    },
+    {
+      question: "Does CloudRoom support team collaboration?",
+      answer:
+        "We currently focus on individual storage, but team collaboration features are planned for future updates. Stay tuned!",
+    },
+    {
+      question: "How do I contact support if I have an issue?",
+      answer:
+        "Our support team is available 24/7 to assist you. You can contact us via live chat, email, or the help section in your dashboard.",
+    },
+    {
+      question: "Can I cancel my subscription at any time?",
+      answer:
+        "Yes, you can cancel your subscription at any time from your account settings. Your files will remain accessible until the end of your billing cycle.",
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer:
+        "We accept all major credit cards and debit cards. Additional payment methods such as PayPal may be supported in the future.",
     },
   ];
 
   return (
-    <section className="py-32 w-full flex flex-row justify-center">
+    <section className="pt-32 w-full flex flex-row justify-center px-10">
       <div className="container">
         <h1 className="mb-4 text-3xl font-semibold md:mb-11 md:text-5xl">
           Frequently asked questions

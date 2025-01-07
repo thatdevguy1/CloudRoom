@@ -3,23 +3,15 @@ import { useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { signUpRedirect } from "@/utils/auth";
 
 function Auth() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const handleSignout = () => {
-    auth.removeUser();
+  const handleSignout = async () => {
+    await auth.signoutRedirect();
     navigate("/");
-  };
-
-  const signUpRedirect = () => {
-    const clientId = "2qc9uch823amu97rhd8r1tcvpa";
-    const signUpUri = "http://localhost:5173/callback";
-    const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
-    window.location.href = `${cognitoDomain}/signup?client_id=${clientId}&code_challenge=OQSY9NXNOZrGZUUPsfnuvLMiY5M4Bx0yQ-DMqHbycvE&code_challenge_method=S256&redirect_uri=${encodeURIComponent(
-      signUpUri
-    )}&response_type=code&scope=openid+email&state=88fe80bb2b234a9698318ec254f37f93`;
   };
 
   if (auth.isLoading) {

@@ -19,6 +19,8 @@ const Dashboard = () => {
   const [jsonFiles, setJsonFiles] = useState<JsonFile[] | null>(null);
   const [fileData, setFileData] = useState<FileMetaData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [fileLoading, setFileLoading] = useState<boolean>(false);
+
   const auth = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -32,20 +34,27 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!auth.user) navigate("/");
-
     (async () => {
-      const files = await getFilesMetaData();
+      setFileLoading(true);
+      const files: FileMetaData[] = await getFilesMetaData();
       if (files) setFileData(files);
+      setFileLoading(false);
       console.log("jsonFiles", files);
     })();
   }, []);
 
   const handleFileSubmit = async (): Promise<void> => {
     setLoading(true);
-    const fileMetaData: FileMetaData[] = await uploadFiles(jsonFiles!);
+    const response: Response[] = await uploadFiles(jsonFiles!);
     setLoading(false);
-    if (fileMetaData)
-      setFileData((prevFileData) => [...prevFileData, ...fileMetaData]);
+    if (response) {
+      setFileLoading(true);
+      setTimeout(async () => {
+        const fileMetaData: FileMetaData[] = await getFilesMetaData();
+        setFileData(fileMetaData);
+        setFileLoading(false);
+      }, 1000);
+    }
   };
 
   const handleDeleteFile = async (fileId: string): Promise<void> => {
@@ -61,16 +70,20 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      <AppSideBar />
+      {/* <AppSideBar /> */}
       <main className="w-[100%]">
-        <SidebarTrigger />
+        {/* <SidebarTrigger /> */}
         <UploadFile
           setFiles={setFiles}
           handleFileSubmit={handleFileSubmit}
           loading={loading}
         />
         <div className="p-6">
-          <DataTable columns={buildColumns(handleDeleteFile)} data={fileData} />
+          <DataTable
+            columns={buildColumns(handleDeleteFile)}
+            data={fileData}
+            fileLoading={fileLoading}
+          />
         </div>
       </main>
     </SidebarProvider>
