@@ -110,11 +110,11 @@ export const getFilesMetaData = async () => {
 
     const data = await response.json();
 
-    console.log("file meta data body data: ", JSON.parse(data.body));
+    console.log("file meta data body data: ", data);
 
     if (data.error) throw new Error(data.error);
 
-    return JSON.parse(data.body);
+    return data;
   } catch (error) {
     console.log("Error getting files metadata", error);
   }
