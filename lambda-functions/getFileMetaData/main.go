@@ -22,6 +22,14 @@ type FileMetadata struct {
 	UserId     string `json:"UserId"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type SuccessResponse struct {
+	Message string `json:"message"`
+}
+
 var (
 	dynamoClient *dynamodb.DynamoDB
 	tableName    = "cloud-room-file-meta-data-table"
@@ -46,38 +54,24 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}, nil
 	}
 
-	// Optional: Filter parameters from query string
-	userId := request.QueryStringParameters["userId"]
-
-	var input *dynamodb.ScanInput
-	if userId != "" {
-		// Query for a specific fileId
-		input = &dynamodb.ScanInput{
-			TableName: aws.String(tableName),
-			FilterExpression: aws.String("UserId = :userId"),
-			ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-				":userId": {S: aws.String(userId)},
-			},
-		}
-	} else {
-		// Scan all records
-		input = &dynamodb.ScanInput{
-			TableName: aws.String(tableName),
-		}
+	userId := request.RequestContext.Authorizer["claims"].(map[string]interface{})["sub"].(string)
+	if userId == "" {
+		return createErrorResponse(400, "userId is required"), nil
 	}
 
+	input := &dynamodb.ScanInput{
+		TableName: aws.String(tableName),
+		FilterExpression: aws.String("UserId = :userId"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":userId": {S: aws.String(userId)},
+		},
+	}
+	
 	// Query or Scan the table
 	result, err := dynamoClient.Scan(input)
+	log.Printf("Query result: %v", result)
 	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Headers: map[string]string{
-				"Access-Control-Allow-Origin":  "*",
-				"Access-Control-Allow-Methods": "GET, OPTIONS",
-				"Access-Control-Allow-Headers": "Content-Type, Authorization, x-auth-token",
-			},
-			Body:       fmt.Sprintf("Error retrieving data: %v", err),
-		}, nil
+		return createErrorResponse(500, fmt.Sprintf("Failed to query table: %v", err)), nil
 	}
 
 	var files []FileMetadata
@@ -91,23 +85,38 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		files = append(files, file)
 	}
 
+	return createSuccessResponse(files), nil
+}
+
+
+
+
+func createErrorResponse(statusCode int, errorMessage string) events.APIGatewayProxyResponse {
+	body, _ := json.Marshal(ErrorResponse{
+		Error: errorMessage,
+	})
+	return events.APIGatewayProxyResponse{
+		StatusCode: statusCode,
+		Headers: map[string]string{
+			"Access-Control-Allow-Origin":  "*", // Enable CORS
+			"Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
+		},
+		Body: string(body),
+	}
+}
+
+func createSuccessResponse(body interface{}) events.APIGatewayProxyResponse {
+	responseBody, _ := json.Marshal(body)
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Headers: map[string]string{
-			"Access-Control-Allow-Origin": "*", 
-			"Access-Control-Allow-Methods": "GET, OPTIONS",
-			"Access-Control-Allow-Headers": "Content-Type, Authorization, x-auth-token",
+			"Access-Control-Allow-Origin":  "*", // Enable CORS
+			"Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
 		},
-		Body: string(mustJSONMarshal(files)),
-	}, nil
-}
-
-func mustJSONMarshal(v interface{}) []byte {
-	data, err := json.Marshal(v)
-	if err != nil {
-		log.Fatalf("Failed to marshal JSON: %v", err)
+		Body: string(responseBody),
 	}
-	return data
 }
 
 func main() {
