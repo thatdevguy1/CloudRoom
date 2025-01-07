@@ -15,7 +15,7 @@ export const claimInvite = async (inviteKey: string) => {
       }
     );
     if (response.ok) {
-      return await response.json();
+      return response;
     }
   } catch (error) {
     console.log("Error claiming invite", error);

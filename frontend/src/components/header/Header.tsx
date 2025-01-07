@@ -93,7 +93,7 @@ const Header = () => {
                   </Link>
                   <Modal
                     message={<InviteForm />}
-                    title="Please Enter You Invite Key"
+                    title="Please Enter Your Invite Key"
                   >
                     <Button>Claim Invite</Button>
                   </Modal>
@@ -177,7 +177,7 @@ const Header = () => {
                       </Link>
                       <Modal
                         message={<InviteForm />}
-                        title="Please Enter You Invite Key"
+                        title="Please Enter Your Invite Key"
                       ></Modal>
                     </>
                   )}

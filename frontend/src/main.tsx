@@ -5,14 +5,14 @@ import App from "./App.tsx";
 import { AuthProvider } from "react-oidc-context";
 import { BrowserRouter } from "react-router";
 import { WebStorageStateStore } from "oidc-client-ts";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+// import { Elements } from "@stripe/react-stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const stripeOptions = {
-  clientSecret: import.meta.env.VITE_STRIPE_SECRET_KEY,
-};
+// const stripeOptions = {
+//   clientSecret: import.meta.env.VITE_STRIPE_SECRET_KEY,
+// };
 
 console.log("VITE_REDIRECT_URI", import.meta.env.VITE_REDIRECT_URI);
 const cognitoAuthConfig = {

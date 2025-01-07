@@ -97,17 +97,16 @@ export const getFilesMetaData = async () => {
     if (!sessionInfoObj) throw new Error("Session info not found");
     const userId = sessionInfoObj.profile?.sub;
 
+    console.log(userId);
+
     if (!userId) throw new Error("User id not found");
 
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/get-files?userId=${userId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": sessionInfoObj.id_token,
-        },
-      }
-    );
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/get-files`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": sessionInfoObj.id_token,
+      },
+    });
 
     const data = await response.json();
 

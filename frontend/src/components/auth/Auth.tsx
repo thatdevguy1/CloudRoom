@@ -1,17 +1,16 @@
 // App.jsq
 import { useAuth } from "react-oidc-context";
-import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signUpRedirect } from "@/utils/auth";
 
 function Auth() {
   const auth = useAuth();
-  const navigate = useNavigate();
 
   const handleSignout = async () => {
-    await auth.signoutRedirect();
-    navigate("/");
+    auth.removeUser();
+    window.location.href =
+      "https://us-east-1883wzbpgq.auth.us-east-1.amazoncognito.com/logout?client_id=2qc9uch823amu97rhd8r1tcvpa&logout_uri=http://localhost:5173/";
   };
 
   if (auth.isLoading) {
