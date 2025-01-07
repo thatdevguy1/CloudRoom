@@ -69,7 +69,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	
 	// Query or Scan the table
 	result, err := dynamoClient.Scan(input)
-	log.Printf("Query result: %v", result)
 	if err != nil {
 		return createErrorResponse(500, fmt.Sprintf("Failed to query table: %v", err)), nil
 	}
@@ -84,6 +83,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}
 		files = append(files, file)
 	}
+	log.Printf("File: %v", files)
 
 	return createSuccessResponse(files), nil
 }
@@ -107,7 +107,11 @@ func createErrorResponse(statusCode int, errorMessage string) events.APIGatewayP
 }
 
 func createSuccessResponse(body interface{}) events.APIGatewayProxyResponse {
-	responseBody, _ := json.Marshal(body)
+	responseBody, err := json.Marshal(body)
+	if err != nil {
+		log.Printf("Failed to marshal response body: %v", err)
+		return createErrorResponse(500, fmt.Sprintf("Failed to marshal response body: %v", err))
+	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Headers: map[string]string{
