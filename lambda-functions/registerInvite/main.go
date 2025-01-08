@@ -65,6 +65,10 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		return createErrorResponse(404, "Invite not found"), nil
 	}
 
+	if bool(*invite.Item["Claimed"].BOOL) {
+		return createErrorResponse(400, "Invite has already been claimed"), nil
+	}
+
 	err = claimInvite(inviteKey, userId)
 	if err != nil {
 		return createErrorResponse(500, "Failed to claim invite"), nil

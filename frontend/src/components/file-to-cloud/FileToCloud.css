@@ -18,7 +18,7 @@
   border-radius: 100%;
   box-shadow: 0 5px 10px #bbb;
   display: inline-block;
-  transform: scale(50%) translateX(-10%);
+  transform: scale(50%) translateX(-5%);
 }
 
 .cloud {

@@ -18,6 +18,7 @@ import (
 var (
 	dynamoClient *dynamodb.DynamoDB
 	tableName    = "cloud-room-file-meta-data-table" // Replace with your DynamoDB table name
+	userTable   = "cloud-room-user-table"
 )
 
 func init() {
@@ -27,6 +28,9 @@ func init() {
 }
 
 func handler(ctx context.Context, s3Event events.S3Event) error {
+	totalFileSize := int64(0)
+	userId := ""
+
 	for _, record := range s3Event.Records {
 		s3 := record.S3
 		bucketName := s3.Bucket.Name
@@ -37,7 +41,7 @@ func handler(ctx context.Context, s3Event events.S3Event) error {
 		decodedKey, err := url.QueryUnescape(objectKey)
 
 		
-		userId := strings.Split(decodedKey, "/")[0]
+		userId = strings.Split(decodedKey, "/")[0]
 		fileId := strings.Split(decodedKey, "/")[1]
 		fileName := strings.Split(decodedKey, "_")[1]
 
@@ -65,6 +69,8 @@ func handler(ctx context.Context, s3Event events.S3Event) error {
 				},
 		}
 
+		totalFileSize += fileSize
+
 		// Insert item into DynamoDB
 		_, err = dynamoClient.PutItem(&dynamodb.PutItemInput{
 			TableName: aws.String(tableName),
@@ -77,6 +83,27 @@ func handler(ctx context.Context, s3Event events.S3Event) error {
 
 		log.Printf("Inserted file %s (%d bytes) from bucket %s into DynamoDB", decodedKey, fileSize, bucketName)
 	}
+
+	_, err := dynamoClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName: aws.String(userTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			"UserId": {
+				S: aws.String(userId),
+			},
+		},
+		UpdateExpression: aws.String("SET UsedSpace = UsedSpace + :size"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":size": {
+				N: aws.String(fmt.Sprintf("%d", totalFileSize)),
+			},
+		},
+	})
+
+	if err != nil {
+		log.Printf("Failed to update user table: %v", err)
+		return fmt.Errorf("failed to update user table: %v", err)
+	}
+
 	return nil
 }
 

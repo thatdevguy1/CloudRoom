@@ -25,6 +25,7 @@ type SuccessResponse struct {
 var (
 	dynamoClient *dynamodb.DynamoDB
 	tableName = "cloud-room-file-meta-data-table"
+	userTable = "cloud-room-user-table"
 	bucketName = "cloud-room-s3-bucket"
 	s3Client *s3.S3
 )
@@ -60,7 +61,17 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		return createErrorResponse(400, "fileId and userId are required"), nil
 	}
 
-	_, err := dynamoClient.DeleteItem(&dynamodb.DeleteItemInput{
+	s3Key := fmt.Sprintf("%s/%s", userId, fileId)		
+	_, err := s3Client.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(bucketName),
+		Key: aws.String(s3Key),
+	})
+
+	if err != nil {
+		return createErrorResponse(500, err.Error()), nil
+	}
+
+	deletedFile, err := dynamoClient.DeleteItem(&dynamodb.DeleteItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			"UserId": {
@@ -70,26 +81,53 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				S: aws.String(fileId),
 			},
 		},
+		ReturnValues: aws.String("ALL_OLD"),
 	})
 
 	if err != nil {
 		return createErrorResponse(500, err.Error()), nil	
 	}
 
-	s3Key := fmt.Sprintf("%s/%s", userId, fileId)		
-	_, err = s3Client.DeleteObject(&s3.DeleteObjectInput{
-		Bucket: aws.String(bucketName),
-		Key: aws.String(s3Key),
-	})
-
-	if err != nil {
-		return createErrorResponse(500, err.Error()), nil
+	if deletedFile.Attributes != nil {
+		if size, ok := deletedFile.Attributes["FileSize"]; ok && size.N != nil {
+			err := updateUsedSpace(userId, *size.N)
+			if err != nil {
+				return createErrorResponse(500, err.Error()), nil
+			}
+		} else {
+			return createErrorResponse(400, "File size not found"), nil
+		}	
+	} else {
+		return createErrorResponse(400, "File size not found"), nil
 	}
 
+	
 	return createSuccessResponse(SuccessResponse{
 		Message: "File deleted successfully",
 	}), nil
 
+}
+
+func updateUsedSpace(userId string, size string) error {
+	_, err := dynamoClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName: aws.String(userTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			"UserId": {
+				S: aws.String(userId),
+			},
+		},
+		UpdateExpression: aws.String("SET UsedSpace = if_not_exists(UsedSpace, :zero) - :size"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":size": {
+				N: aws.String(size),
+			},
+			":zero": {
+				N: aws.String("0"),
+			},
+		},	
+	})
+
+	return err
 }
 
 func createErrorResponse(statusCode int, errorMessage string) events.APIGatewayProxyResponse {

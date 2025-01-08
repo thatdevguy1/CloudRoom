@@ -3,7 +3,7 @@ interface FileMetaData {
   UserId: string;
   UploadDate: string;
   FileName: string;
-  FileSize: number;
+  FileSize: number | string;
 }
 
 export default FileMetaData;

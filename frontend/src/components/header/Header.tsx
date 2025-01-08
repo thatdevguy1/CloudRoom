@@ -175,83 +175,19 @@ const Header = () => {
                       >
                         Dashboard
                       </Link>
-                      <Modal
-                        message={<InviteForm />}
-                        title="Please Enter Your Invite Key"
-                      ></Modal>
                     </>
                   )}
                 </div>
                 <div className="border-t pt-4">
-                  <div className="grid grid-cols-2 justify-start">
-                    <a
-                      className={cn(
-                        buttonVariants({
-                          variant: "ghost",
-                        }),
-                        "justify-start text-muted-foreground"
-                      )}
-                      href="#"
-                    >
-                      Press
-                    </a>
-                    <a
-                      className={cn(
-                        buttonVariants({
-                          variant: "ghost",
-                        }),
-                        "justify-start text-muted-foreground"
-                      )}
-                      href="#"
-                    >
-                      Contact
-                    </a>
-                    <a
-                      className={cn(
-                        buttonVariants({
-                          variant: "ghost",
-                        }),
-                        "justify-start text-muted-foreground"
-                      )}
-                      href="#"
-                    >
-                      Imprint
-                    </a>
-                    <a
-                      className={cn(
-                        buttonVariants({
-                          variant: "ghost",
-                        }),
-                        "justify-start text-muted-foreground"
-                      )}
-                      href="#"
-                    >
-                      Sitemap
-                    </a>
-                    <a
-                      className={cn(
-                        buttonVariants({
-                          variant: "ghost",
-                        }),
-                        "justify-start text-muted-foreground"
-                      )}
-                      href="#"
-                    >
-                      Legal
-                    </a>
-                    <a
-                      className={cn(
-                        buttonVariants({
-                          variant: "ghost",
-                        }),
-                        "justify-start text-muted-foreground"
-                      )}
-                      href="#"
-                    >
-                      Cookie Settings
-                    </a>
-                  </div>
-                  <div className="mt-2 flex flex-col gap-3">
+                  <div className="mt-2 flex flex-row justify-between gap-3">
+                    {auth.isAuthenticated && (
+                      <Modal
+                        message={<InviteForm />}
+                        title="Please Enter Your Invite Key"
+                      >
+                        <Button>Claim Invite</Button>
+                      </Modal>
+                    )}
                     <Auth />
                   </div>
                 </div>
