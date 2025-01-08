@@ -1,3 +1,4 @@
 *.zip
 lambda-functions/*/**
 !lambda-functions/**/*.go
+bootstrap
