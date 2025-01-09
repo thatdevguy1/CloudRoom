@@ -23,7 +23,7 @@ const Header = () => {
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <img src="cloudroom.png" className="h-12" alt="logo" />
+              <img src="./cloudroom.png" className="h-12" alt="logo" />
             </div>
             <div className="flex items-center">
               <Link
