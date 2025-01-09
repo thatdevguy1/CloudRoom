@@ -6,9 +6,10 @@ import { Suspense } from "react";
 import LaptopModel from "../laptop-model/LaptopModel";
 import { Environment, OrbitControls, ContactShadows } from "@react-three/drei";
 import { Link } from "react-router";
-import { signUpRedirect } from "@/utils/auth";
+import { useAuth } from "react-oidc-context";
 
 const Hero1 = () => {
+  const auth = useAuth();
   return (
     <section className="py-32 px-10">
       <div className="container">
@@ -28,7 +29,10 @@ const Hero1 = () => {
               future.
             </p>
             <div className="flex w-full flex-col justify-center gap-2 sm:flex-row lg:justify-start">
-              <Button onClick={signUpRedirect} className="w-full sm:w-auto">
+              <Button
+                onClick={() => auth.signinRedirect()}
+                className="w-full sm:w-auto"
+              >
                 Sign Up Now
               </Button>
               <Link to="/pricing">

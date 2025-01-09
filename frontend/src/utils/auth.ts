@@ -4,7 +4,7 @@ export const signUpRedirect = () => {
   const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
   window.location.href = `${cognitoDomain}/signup?client_id=${clientId}&code_challenge=OQSY9NXNOZrGZUUPsfnuvLMiY5M4Bx0yQ-DMqHbycvE&code_challenge_method=S256&redirect_uri=${encodeURIComponent(
     signUpUri
-  )}&response_type=code&scope=openid+email&state=88fe80bb2b234a9698318ec254f37f93`;
+  )}&response_type=code&scope=openid+email`;
 };
 
 export const getSessionInfo = () => {

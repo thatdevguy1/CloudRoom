@@ -2,7 +2,6 @@
 import { useAuth } from "react-oidc-context";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { signUpRedirect } from "@/utils/auth";
 
 function Auth() {
   const auth = useAuth();
@@ -40,7 +39,7 @@ function Auth() {
       >
         Sign in
       </Button>
-      <Button onClick={() => signUpRedirect()}>Sign up</Button>
+      <Button onClick={() => auth.signinRedirect()}>Sign up</Button>
     </div>
   );
 }
