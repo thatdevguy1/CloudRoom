@@ -58,6 +58,8 @@ const Dashboard = () => {
       setLoading(false);
       if (response) {
         setFileLoading(true);
+        //- Added a timeout to simulate the delay in the server response
+        // Websockets would be a better solution to this
         setTimeout(async () => {
           const fileMetaData: FileMetaData[] = await getFilesMetaData();
           if (fileMetaData) {
@@ -65,7 +67,7 @@ const Dashboard = () => {
             setFileData(processedFileData);
           }
           setFileLoading(false);
-        }, 1000);
+        }, 2000);
       }
     } catch (error) {
       setLoading(false);
