@@ -9,8 +9,9 @@ function Auth() {
 
   const handleSignout = async () => {
     auth.removeUser();
-    window.location.href =
-      "https://us-east-1883wzbpgq.auth.us-east-1.amazoncognito.com/logout?client_id=2qc9uch823amu97rhd8r1tcvpa&logout_uri=http://localhost:5173/";
+    window.location.href = `https://us-east-1883wzbpgq.auth.us-east-1.amazoncognito.com/logout?client_id=2qc9uch823amu97rhd8r1tcvpa&logout_uri=${
+      import.meta.env.VITE_LOGOUT_REDIRECT_URI
+    }`;
   };
 
   if (auth.isLoading) {
