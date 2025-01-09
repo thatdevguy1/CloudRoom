@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 // import AppSideBar from "@/components/app-sidebar/AppSideBar";
 import { DataTable } from "@/components/data-table/DataTable";
 import { buildColumns } from "@/components/data-table/columns";
@@ -16,7 +16,6 @@ import { useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { set } from "react-hook-form";
 
 const Dashboard = () => {
   const [files, setFiles] = useState<FileList | null>(null);

@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState, useRef, DragEventHandler } from "react";
+import { useState, useRef } from "react";
 import { Skeleton } from "../ui/skeleton";
 
 interface FileUploadProps {
@@ -16,7 +16,7 @@ export default function FileUpload({
   loading,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dragActive, setDragActive] = useState<boolean>(false);
+  const [_, setDragActive] = useState<boolean>(false);
 
   const handleDrag = (e: any) => {
     e.preventDefault();

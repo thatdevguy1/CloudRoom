@@ -1,4 +1,4 @@
-import { JsonFile, FileMetaData, UrlResponse } from "../types";
+import { JsonFile, UrlResponse } from "../types";
 import { getSessionInfo } from "./auth";
 
 export const convertFilesToBase64String = async (
