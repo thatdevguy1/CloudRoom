@@ -93,7 +93,7 @@ const Header = () => {
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src="cloudroom.png" className="h-12" alt="logo" />
+              <img src="./cloudroom.png" className="h-12" alt="logo" />
             </div>
             <Sheet>
               <SheetTrigger asChild>

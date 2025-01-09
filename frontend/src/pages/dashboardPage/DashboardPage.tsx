@@ -14,7 +14,6 @@ import {
 } from "@/utils/file";
 import { useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router";
-import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -123,7 +122,6 @@ const Dashboard = () => {
           />
         </div>
       </main>
-      <Toaster />
     </SidebarProvider>
   );
 };

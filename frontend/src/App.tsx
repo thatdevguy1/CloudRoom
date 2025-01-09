@@ -9,6 +9,7 @@ import SilentCallback from "./components/silent-callback/SilentCallback";
 import { useAuth } from "react-oidc-context";
 import Faq from "./components/faq/Faq";
 import DynamicPage from "./pages/dynamicPage/DynamicPage";
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ function App() {
           }
         />
       </Routes>
+      <Toaster />
     </>
   );
 }
