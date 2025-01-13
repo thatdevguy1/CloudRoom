@@ -29,6 +29,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (files) {
+      console.log("original files from dashboard", files);
       (async () => {
         const jsonFiles = await convertFilesToBase64String(files);
         setJsonFiles(jsonFiles);
@@ -53,7 +54,7 @@ const Dashboard = () => {
   const handleFileSubmit = async (): Promise<void> => {
     try {
       setLoading(true);
-      const response: Response[] = await uploadFiles(jsonFiles!);
+      const response: Response[] = await uploadFiles(files!);
       setLoading(false);
       if (response) {
         setFileLoading(true);

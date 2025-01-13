@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -92,6 +93,9 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			return createErrorResponse(400, fmt.Sprintf("failed to decode base64 content: %v", err)), nil
 		}
 
+		// Detect content type
+		contentType := http.DetectContentType(fileContent)
+
 		// Generate a unique file name
 		uniqueFileName := fmt.Sprintf("%s_%s", uuid.New().String(), file.FileName)
 
@@ -103,6 +107,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			Bucket: aws.String(bucketName),
 			Key:    aws.String(s3Key),
 			Body:   aws.ReadSeekCloser(bytes.NewReader(fileContent)),
+			ContentType: aws.String(contentType),
 		}
 
 		//Prepare metadata for DynamoDB

@@ -33,28 +33,24 @@ export const convertFilesToBase64String = async (
 interface FileInfo {
   FileName: string;
   size: number;
+  contentType: string;
 }
 
-export const uploadFiles = async (files: JsonFile[]): Promise<Response[]> => {
+export const uploadFiles = async (
+  originalFiles: FileList
+): Promise<Response[]> => {
   const sessionInfo = getSessionInfo();
   if (sessionInfo === null) throw new Error("Session info not found");
   const sessionInfoObj = JSON.parse(sessionInfo);
   const fileInfo: FileInfo[] = [];
 
-  const cleanedFiles: JsonFile[] = files.map((file) => {
-    let cleanContent;
-    const sanatisedFileName = file.fileName.replace(/_/g, "-");
-    if (typeof file.content === "string")
-      cleanContent = file.content?.split(",")[1];
-
-    // Backend lambda function expects pascal case property names
-    fileInfo.push({ FileName: sanatisedFileName, size: file.size });
-    return {
-      fileName: sanatisedFileName,
-      content: cleanContent || file.content,
-      size: file.size,
-    };
-  });
+  for (let i = 0; i < originalFiles.length; i++) {
+    fileInfo.push({
+      FileName: originalFiles[i].name.replace(/_/g, "-"),
+      size: originalFiles[i].size,
+      contentType: "application/octet-stream",
+    });
+  }
 
   const response = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
     method: "POST",
@@ -67,16 +63,24 @@ export const uploadFiles = async (files: JsonFile[]): Promise<Response[]> => {
 
   const urls = await response.json();
   if (urls.error) throw new Error(urls.error);
-  console.log("urls::: ", urls);
-  const uploadPromises = cleanedFiles.map((file: JsonFile) => {
+
+  const uploadPromises = [];
+
+  for (let i = 0; i < originalFiles.length; i++) {
     const { url } = urls.find(
-      (url: UrlResponse) => url.fileName === file.fileName
+      (url: UrlResponse) => url.fileName === originalFiles[i].name
     );
-    return fetch(url, {
-      method: "PUT",
-      body: JSON.stringify(file),
-    });
-  });
+
+    uploadPromises.push(
+      fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: originalFiles[i],
+      })
+    );
+  }
 
   const res = await Promise.all(uploadPromises);
 
@@ -140,9 +144,13 @@ export const downloadFile = async (fileId: string) => {
     console.log("Download data: ", data);
     if (data.error) throw new Error(data.error);
     const url = data.url;
+    console.log("url", url);
+    // const data2 = await fetch(url);
+    // const data3 = await data2.json();
+    // console.log(data3);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${userId}/${fileId}`;
+    link.download = `${data.fileName}`;
     link.click();
     return data;
   } catch (error) {

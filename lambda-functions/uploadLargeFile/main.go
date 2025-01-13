@@ -21,6 +21,7 @@ import (
 type FileRequest struct {
 	FileName string `json:"fileName"`
 	Size    int64  `json:"size"`
+	ContentType string `json:"contentType"`
 }
 
 type PreSignedURLResponse struct {
@@ -92,11 +93,15 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	var urls []PreSignedURLResponse
 	for _, file := range files {
+		log.Printf("Uploading file: %s", file.FileName)
+		log.Printf("File size: %d", file.Size)
+		log.Printf("Content type: %s", file.ContentType)
 		uniqueFileName := fmt.Sprintf("%s_%s", uuid.New().String(), file.FileName)
 		s3Key := fmt.Sprintf("%s/%s", userId,  uniqueFileName)
 		req, _ := s3Client.PutObjectRequest(&s3.PutObjectInput{
 			Bucket: aws.String(bucketName),
 			Key:    aws.String(s3Key),
+			ContentType: aws.String(file.ContentType),
 		})
 		url, err := req.Presign(15 * time.Minute)
 		if err != nil {
