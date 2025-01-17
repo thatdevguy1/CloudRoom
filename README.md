@@ -93,8 +93,6 @@ CloudRoom is a secure and scalable file storage application designed for seamles
 
 ### Diagram
 
-_(Include a visual diagram of your architecture if possible)_
-
 - **Cognito**: Manages user sign-in/sign-up.
 - **API Gateway**: Routes API requests to the appropriate Lambda functions.
 - **Lambda**: Executes serverless backend logic, including file management and user operations.
