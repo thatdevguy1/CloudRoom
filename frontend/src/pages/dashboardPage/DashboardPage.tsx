@@ -67,7 +67,7 @@ const Dashboard = () => {
             setFileData(processedFileData);
           }
           setFileLoading(false);
-        }, 2000);
+        }, 5000);
       }
     } catch (error) {
       setLoading(false);
