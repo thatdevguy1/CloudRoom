@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [files, setFiles] = useState<FileList | null>(null);
-  const [jsonFiles, setJsonFiles] = useState<JsonFile[] | null>(null);
+  const [_, setJsonFiles] = useState<JsonFile[] | null>(null); //This state might no longer be needed
   const [fileData, setFileData] = useState<FileMetaData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
