@@ -18,6 +18,7 @@ function Auth() {
   }
 
   if (auth.error) {
+    console.log(auth.error);
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
