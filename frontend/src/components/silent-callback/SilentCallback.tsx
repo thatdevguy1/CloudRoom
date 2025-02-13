@@ -8,7 +8,7 @@ function SilentCallback() {
     if (auth.error) {
       auth.signinRedirect();
     }
-  }, []);
+  }, [auth.error]);
   return (
     <>
       <div className="flex flex-row justify-around">
